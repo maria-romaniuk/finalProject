@@ -11,6 +11,7 @@ export interface IForm {
 export interface InitialFormState {
     form: IForm;
     status: null | 'loading' | 'success' | 'error';
+    errorMessage: string | null;
 
 }
 const initialState: InitialFormState = {
@@ -20,10 +21,11 @@ const initialState: InitialFormState = {
         message: '',
     },
     status: null,
+     errorMessage: null
 }
 
 export const sendForm = createAsyncThunk<void, IForm, {state:RootState}>('form/sendForm',
-    async (form) => {
+    async (form, { rejectWithValue}) => {
         try {
             const response = await axios.post('', form, {
                 headers: {
@@ -32,8 +34,12 @@ export const sendForm = createAsyncThunk<void, IForm, {state:RootState}>('form/s
             });
             return response.data;
         } catch(error) {
-            throw new Error(error.response.data.message || 'Something went wrong');
-            
+            // throw new Error(error.response.data.message || 'Something went wrong');
+            let errorMessage = 'Something went wrong';
+            if (axios.isAxiosError(error) && error.response) {
+                errorMessage = error.response.data.message || errorMessage;
+            }
+            return rejectWithValue(errorMessage);
         }
     }
 )

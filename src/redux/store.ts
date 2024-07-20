@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import contactUsSlice from "./contactUsSlice";
+import newsSlice from "./newsSlice";
 
 const store = configureStore({
     reducer: {
-        contactForm: contactUsSlice
+        contactForm: contactUsSlice,
+        news: newsSlice
     }
 })
 
